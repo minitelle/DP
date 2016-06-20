@@ -1,4 +1,4 @@
-# DP
+# DataProducts
 
 ---
 title: "Read Me"
