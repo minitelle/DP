@@ -10,3 +10,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 Data Products stuff will reside here.
+* ShinyIO
+* R packages
+* GoogleViz
