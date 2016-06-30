@@ -1,0 +1,6 @@
+Read ME
+========================================================
+
+The GOT Data comes from Kaggle. See dataset details here:
+https://www.kaggle.com/mylesoneill/game-of-thrones
+The data has been released eleased Under CC0: Public Domain License
