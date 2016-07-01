@@ -10,6 +10,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 Data Products stuff will reside here.
-* ShinyIO
-* R packages
+* Shiny Apps
+* Slidify
 * GoogleViz
+* RPres
+
+[This is home](https://minitelle.github.io/DP/)
