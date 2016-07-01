@@ -1,0 +1,6 @@
+{
+  "name": "DataProducts",
+  "tagline": "",
+  "body": "# DataProducts\r\n\r\n---\r\ntitle: \"Read Me\"\r\noutput: html_document\r\n---\r\n\r\n```{r setup, include=FALSE}\r\nknitr::opts_chunk$set(echo = TRUE)\r\n```\r\n\r\nData Products stuff will reside here.\r\n* ShinyIO\r\n* R packages\r\n* GoogleViz",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
