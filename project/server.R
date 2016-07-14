@@ -5,6 +5,7 @@
 library(shiny)
 library(rCharts)
 library(ggplot2)
+library(latticeExtra)
 source("loaddata.R")
 # App info
 shinyServer(
@@ -27,7 +28,7 @@ shinyServer(
       #p1$set(dom = 'plot1')
       p1$addParams(dom = 'plot1', title="test")
       p1$xAxis(axisLabel = "Regions")
-      p1$chart(color = c('#413657', '#265475', '#353817', '6C2224', '4F0F0F', '777274'))
+      p1$chart(color = c('#413657', '#265475', '#353817', '6C2224', '#4F0F0F', '777274'))
       ##
       return(p1)
     })
@@ -55,38 +56,37 @@ shinyServer(
       
     p3 <- rPlot(attacker_1 ~ defender_1 | year, data = selectedData1(), type = 'point', color = 'attacker_outcome')
     p3$facet(var = 'year', rows = 3)
-    p3$guides(x = list(title="Defender House"), y = list(title="Attacker House", numticks = 8))
-    p3$set(color = c('#413657', '#265475'))
+    p3$guides(x = list(title="Defender House"), y = list(title="Attacker House", numticks = 7))
+    p3$set(color = c('#413657', '#265475'), opacity=list(const=0.5))
     p3$set(dom = 'plot3', title="Battle outcome by Opponents",  height="450")
     #p3$addParams(dom = 'plot3', title="Major Deaths")
     ##
     return(p3)
     })
     #### Plot3 ####
-    output$plot3B <- renderChart2({
-    
-      #dat <- selectedData1()
-    
-      p3B <- rPlot(x = "attacker_size", y = "defender_size", data = selectedData1(), color = "attacker_outcome",
-                  type = 'point')
-      p3B$guides(x = list(title="Defender House"), y = list(title="Attacker House"))
-      p3B$set(dom = 'plot3B', title="Battle outcome by Opponents",  height="450")
-     #fit<- lm(attacker_size ~ defender_size, data=battles)
-      
-      #dat = fortify(lm(attacker_size ~ as.factor(attacker_outcome), data=battles))
-      #names(dat) = gsub('\\.', '_', names(dat))
-      #fitted <- lm(attacker_size ~ defender_size, data=battles)$fitted.values
-  
-      #p3B$layer(x = 'attacker_1', y = 'defender_1', data = selectedData1(), copy_layer = T, type = 'line')
+    output$plot3B <- renderChart({
+      bdat <- subset(battles, attacker_size <= 50000)
+      dat = fortify(lm(defender_size ~ attacker_outcome + attacker_size + attacker_1, data = bdat))
+      names(dat) = gsub('\\.', '_', names(dat));
+      p3B <- rPlot(defender_size ~ attacker_size, data = dat, type = 'point', color="attacker_outcome")
+      p3B$layer(y = '_resid', x = '_fitted', copy_layer = T, type = 'point', size=list(const="2"), opacity=list(const=0.5),
+                color = list(const = 'crimson'))
+      p3B$layer(y = '_resid', x = '_fitted', copy_layer = T, type = 'line', size=list(const="1"),
+                color = list(const = '#4F0F0F'),
+                tooltip = "function(item){return item._fitted}")
+      p3B$guides(x = list(title="Defender Size/Fitted values (crimson dots & line)"), y = list(title="Attacker Size/Residuals (crimson dots &  line)", numticks = 8))
+      p3B$set(dom = 'plot3B', title="Attacker, Attacker Size& Battle Outcome relationship with Defender Size",  height="450")
+
       return(p3B)
     })
     
     ### Panel 2 Plots ###
-    ## Set selectedDate 2
+    ## Set selectedData 2
     selectedData2 <- reactive({
-      gpdata <- na.omit(subset(got_predict,select=c(culture,isAlive, house, isNoble)))
+      gpdata <- na.omit(subset(got_predict,select=c(name, culture,isAlive, house, isNoble, age)))
       gpdata$isAlive[gpdata$isAlive == "1"] <- "Alive"
       gpdata$isAlive[gpdata$isAlive == "0"] <- "Dead"
+      gpdata$name <- as.factor(gpdata$name)
       gpdata$isAlive <- as.factor(gpdata$isAlive)
       gpdata$isNoble <- as.factor(gpdata$isNoble)
       gpdata$culture <- as.factor(gpdata$culture)
@@ -100,38 +100,83 @@ shinyServer(
     })
     #
     selectedData3 <- reactive({
-      gcdata <- na.omit(subset(got_deaths,select=c(Name, Allegiances,Gender, Nobility, Death.Year, Book.of.Death)))
-      gcdata$isAlive <- as.factor(gpdata$Name)
-      gcdata$isNoble <- as.factor(gpdata$Allegiances)
-      gcdata$culture <- as.factor(gpdata$Gender)
-      gcdata$house <- as.factor(gpdata$Nobility)
-      gcdata$house <- as.factor(gpdata$Book.of.Death)
-      gcdata$house <- as.factor(gpdata$Death.Year)
-      
+      gcdata <- na.omit(subset(got_deaths,select=c(Name, Allegiances, Gender, Nobility, DeathYear, Death)))
+      #gcdata$Name<- as.factor(gcdata$Name)
+      #gcdata$Allegiances <- as.factor(gcdata$Allegiances)
+     #gcdata$DeathYear <- as.factor(gcdata$Death.Year)
+     # gcdata$Gender <- as.factor(gcdata$Gender)
+      #gcdata$Nobility <- as.factor(gcdata$Nobility)
       #
       gcdata[which(gcdata$Allegiances %in% input$got_house), ]
-      # colnames(battles)[c(6, 10, 14)] <- c("Main Attacker", "Main Defender", "Attacker Battle Outcome")
-      # battles[which(as.factor(battles$year) %in% input$got_year),] #& as.factor(battles$attacker_1) %in% input$got_house
     })
     #### Plot4 ####
     output$plot4 <- renderChart({
       
       p4 <- nPlot(~culture, data = selectedData2(), group="isAlive", type = 'multiBarChart')
       p4$chart(showControls = F)
-      p4$chart(color = c('#413657', '#265475', '#353817','#413657', '#353817', '6C2224'))
+      p4$chart(color = c('#5AC8FF', '#265475', '#353817','#413657', '#353817', '6C2224'))
       p4$set(dom = 'plot4')
       #p3$addParams(dom = 'plot4', title="Major Deaths")
       p4$yAxis(axisLabel = 'Number of Dead or Alive', width=55)
-      p4$xAxis(axisLabel = 'Culture by Hosue Allegiance')
+      p4$xAxis(axisLabel = 'Culture by House Allegiance')
       #p4$legend(rotateLabels=-45)
       ##
       return(p4)
     })
     #### Plot 5 ####
-    #output$plot5 <- renderChart({
-      ###
-      ###
-    #})
+    output$plot5 <- renderChart({
+
+      p5 <- dPlot(
+        x = c("Gender","Name", "Death"),
+        y = "Allegiances",
+        z = "Nobility",
+        groups = "Nobility",
+        data = selectedData3(),
+        type = "bubble",
+        aggregate = "dimple.aggregateMethod.max"
+      )
+      p5$xAxis( type = "addCategoryAxis" )
+      p5$yAxis( type = "addCategoryAxis" )
+      p5$legend(
+        x = 200,
+        y = 10,
+        width = 500,
+        height = 20,
+        horizontalAlign = "right"
+      )
+      p5$defaultColors(theEconomist.theme()$superpose.line$col)
+      p5$set(dom = "plot5")
+      return(p5)
+ 
+    })
+    
+    #### Plot 6 ####
+    output$plot6 <- renderChart({
+      
+      p6 <- dPlot(
+        x = c("culture","house"),
+        y = "isAlive",
+        z = "name",
+        groups = "house",
+        data = selectedData2(),
+        type = "bar"
+      )
+      p6$yAxis(type = "addCategoryAxis")
+      p6$xAxis(type = "addCategoryAxis")
+      p6$legend(
+        x = 200,
+        y = 10,
+        width = 400,
+        height = 20,
+        horizontalAlign = "right"
+      )
+    
+      
+      p6$defaultColors("#!d3.scale.category20b()!#")
+      p6$set(dom = "plot6")
+      return(p6)
+      
+    })
     #### THE END OF PLOTS
     } # End input output function
 )

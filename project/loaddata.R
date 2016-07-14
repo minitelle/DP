@@ -5,6 +5,20 @@ battles <- read.csv("https://raw.githubusercontent.com/minitelle/DP/master/proje
 got_deaths <- read.csv("https://raw.githubusercontent.com/minitelle/DP/master/project/game-of-thrones/character-deaths.csv", header=TRUE, stringsAsFactors=TRUE, na.strings=c("NA", " ", ""))
 ##Fix allegiances column and remove the value "House"
 got_deaths$Allegiances <- gsub("^House ","",got_deaths$Allegiances)
+got_deaths$Gender[got_deaths$Gender == "1"] <- "Men"
+got_deaths$Gender[got_deaths$Gender == "0"] <- "Women"
+got_deaths$Nobility[got_deaths$Nobility == "1"] <- "Noble"
+got_deaths$Nobility[got_deaths$Nobility == "0"] <- "Pesant"
+got_deaths$DeathYear <- as.factor(got_deaths$Death.Year)
+#
+got_deaths$Death[got_deaths$DeathYear=="297"] <- "Dead"
+got_deaths$Death[got_deaths$DeathYear=="298"] <- "Dead"
+got_deaths$Death[got_deaths$DeathYear=="299"] <- "Dead"
+got_deaths$Death[got_deaths$DeathYear=="300"] <- "Dead"
+got_deaths$Death[is.na(got_deaths$DeathYear)==T] <- "Unknown or Alive"
+#got_deaths$Death=="Dead" <- got_deaths$DeathYear[got_deaths$DeathYear=="300"]
+#got_deaths$Death=="Dead" <- got_deaths$DeathYear[got_deaths$DeathYear=="299"]
+#got_deaths$Death=="Unknown /Alive" <- got_deaths$DeathYear[got_deaths$DeathYear=="NA"]
 
 # III Read got predict
 got_predict <- read.csv("https://raw.githubusercontent.com/minitelle/DP/master/project/game-of-thrones/character-predictions.csv", header=TRUE, stringsAsFactors=TRUE, na.strings=c("NA", " ", ""))
