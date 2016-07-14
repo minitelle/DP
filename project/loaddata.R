@@ -16,9 +16,6 @@ got_deaths$Death[got_deaths$DeathYear=="298"] <- "Dead"
 got_deaths$Death[got_deaths$DeathYear=="299"] <- "Dead"
 got_deaths$Death[got_deaths$DeathYear=="300"] <- "Dead"
 got_deaths$Death[is.na(got_deaths$DeathYear)==T] <- "Unknown or Alive"
-#got_deaths$Death=="Dead" <- got_deaths$DeathYear[got_deaths$DeathYear=="300"]
-#got_deaths$Death=="Dead" <- got_deaths$DeathYear[got_deaths$DeathYear=="299"]
-#got_deaths$Death=="Unknown /Alive" <- got_deaths$DeathYear[got_deaths$DeathYear=="NA"]
 
 # III Read got predict
 got_predict <- read.csv("https://raw.githubusercontent.com/minitelle/DP/master/project/game-of-thrones/character-predictions.csv", header=TRUE, stringsAsFactors=TRUE, na.strings=c("NA", " ", ""))

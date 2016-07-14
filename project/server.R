@@ -6,6 +6,7 @@ library(shiny)
 library(rCharts)
 library(ggplot2)
 library(latticeExtra)
+library(rjson)
 source("loaddata.R")
 # App info
 shinyServer(
@@ -154,15 +155,16 @@ shinyServer(
     output$plot6 <- renderChart({
       
       p6 <- dPlot(
-        x = c("culture","house"),
-        y = "isAlive",
-        z = "name",
-        groups = "house",
+        y = c("house", "isAlive"),
+        x = "name",
+        z = "age",
+        groups = "culture",
         data = selectedData2(),
-        type = "bar"
+        type = "bubble",
+        aggregate = "dimple.aggregateMethod.max"
       )
       p6$yAxis(type = "addCategoryAxis")
-      p6$xAxis(type = "addCategoryAxis")
+      p6$xAxis(type = "addCategoryAxis", horizontalAlign = "right")
       p6$legend(
         x = 200,
         y = 10,
@@ -172,7 +174,7 @@ shinyServer(
       )
     
       
-      p6$defaultColors("#!d3.scale.category20b()!#")
+      p6$defaultColors("#!d3.scale.category10()!#")
       p6$set(dom = "plot6")
       return(p6)
       

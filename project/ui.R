@@ -109,8 +109,8 @@ shinyUI(
                 hr(),
                 #### End of Plot 5   
                 #### Plot6 ####
-                h4(em("TBD")),
-                helpText("Use the 'House' option in the side panel to control this graph."),
+                h4(em("Characters' Culture & House Allegiances by Dead/Alive Status")),
+                helpText("Use the 'House' and Alive Status options in the side panel to control this graph."),
                 showOutput("plot6", lib="dimple"),
                 hr(),
                 #### End of Plot 5####
